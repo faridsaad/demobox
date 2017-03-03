@@ -1,0 +1,43 @@
+---
+
+    - name: apache server packages
+      shell: apt-get -y install apache2 apache2-utils apache2-bin libapache2-mod-wsgi libapr1 libaprutil1 libaprutil1-dbd-sqlite3 libaprutil1-ldap
+
+    - name: enable proxy_http
+      shell: a2enmod proxy_http
+
+    - name: enable mod_ssl
+      shell: a2enmod ssl
+
+    - name: Enable default-ssl
+      shell: a2ensite default-ssl
+
+    - name: basic ssl apache configuration
+      copy: src=default-ssl.conf dest=/etc/apache2/sites-available/default-ssl.conf 
+            mode=644
+            owner=root
+            group=root
+
+    - name: Apache SSL certificate directory
+      file: state=directory path=/etc/apache2/certs owner=root group=root
+
+    - name: create ajaxterm directory
+      file: path=/srv/ajaxterm state=directory
+   
+    - name: create access file
+      shell: "htpasswd -bc /srv/ajaxterm/.htpasswd {{ htuser }} {{ htpass }}"
+
+    - name: install ajaxterm
+      apt: name=ajaxterm state=present
+
+    - name: patch ajaxterm.css if debian
+      copy: src=ajaxterm.css dest=/usr/share/ajaxterm/ajaxterm.css
+            mode=644
+            owner=root
+            group=root
+
+    - name: restart apache
+      service: name=apache2 state=restarted
+
+    - name: restart ajaxterm
+      service: name=ajaxterm state=restarted

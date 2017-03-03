@@ -1,0 +1,18 @@
+---
+ - name: update our pkg cache
+   shell: apt-get -y update 
+
+ - name: install python
+   shell: apt-get -y install python
+
+ - name: get python-apt
+   shell: apt-get -y install python-apt
+
+ - name: get debian build essential
+   apt: pkg=build-essential
+
+ - name: network libs
+   shell: apt-get -y install dnsutils
+
+ - name: Get Git
+   apt: pkg=git
